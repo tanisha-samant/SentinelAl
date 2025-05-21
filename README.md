@@ -14,9 +14,9 @@ SentinelAI is a real-time threat detection system designed to enhance women's sa
 - **app.py:** Flask backend handling API requests, model inference, and media processing.
 - **create_label_encoder.py:** Generates a LabelEncoder for audio classes, saved as label_encoder.pkl.
 - **index.html:** Frontend interface for user interaction (file uploads, URL input, real-time capture).
-- **emotion detection:** Jupyter Notebook for training the emotion detection model (ferplus_cnn.h5).
-- **weapon detection:** Jupyter Notebook for training the weapon detection model (weapon_detection_model.h5).
-- **sound detection:** Jupyter Notebook for training the audio classification model (sentinel_sound_model.h5).
+- **emotion_detection_model.ipynb:** Jupyter Notebook for training the emotion detection model (ferplus_cnn.h5).
+- **weapon_detection_model.ipynb:** Jupyter Notebook for training the weapon detection model (weapon_detection_model.h5).
+- **sound_detection_model.ipynb:** Jupyter Notebook for training the audio classification model (sentinel_sound_model.h5).
 
 ## Requirements
 ### System Dependencies
@@ -58,9 +58,9 @@ python create_label_encoder.py
 ```plain
 sentinelai/
 ├──notebooks/
-│   ├── emotion detection
-│   ├── weapon detection
-│   ├── sound detection
+│   ├── emotion_detection_model.ipynb
+│   ├── weapon_detection_model.ipynb
+│   ├── sound_detection_model.ipynb
 ├── models/
 │   ├── ferplus_cnn.h5
 │   ├── weapon_detection_model.h5
@@ -102,17 +102,17 @@ python app.py
 
 3. Training Models (if needed):
 
-- Run emotion detection with the FER+ dataset to train the emotion detection model.
-- Run weapon detection with a dataset of gun, knife, and negative images to train the weapon detection model.
-- Run sound detection in a Colab environment to download ESC-50/RAVDESS datasets and train the audio classification model.
+- Run emotion_detection_model.ipynb with the FER+ dataset to train the emotion detection model.
+- Run weapon_detection_model.ipynb with a dataset of gun, knife, and negative images to train the weapon detection model.
+- Run sound_detection_model.ipynb in a Colab environment to download ESC-50/RAVDESS datasets and train the audio classification model.
 
 
 
 ## Datasets
 
 - **Emotion Detection:** FER+ dataset (grayscale images, organized in train, validation, test folders).
-- **Weapon Detection:** Custom dataset with gun, knife, and neg subfolders, split into train, val, test by wepon6.ipynb.
-- **Sound Analysis:** ESC-50 (environmental sounds) and RAVDESS (emotional speech), automatically downloaded in Untitled0.ipynb.
+- **Weapon Detection:** Custom dataset with gun, knife, and neg subfolders, split into train, val, test by weapon_detection_model.ipynb.
+- **Sound Analysis:** ESC-50 (environmental sounds) and RAVDESS (emotional speech), automatically downloaded in sound_detection_model.ipynb.
 
 ## Notes
 
