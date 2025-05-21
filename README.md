@@ -94,10 +94,10 @@ python app.py
 
 2. API Endpoints (```app.py```):
 
-/analyze: POST endpoint for analyzing uploaded files (image, video, audio).
-/analyze_url: POST endpoint for analyzing media from URLs.
-/health: GET endpoint to check server status and model availability.
-/: Serves the index.html frontend.
+- ```/analyze```: POST endpoint for analyzing uploaded files (image, video, audio).
+- ```/analyze_url```: POST endpoint for analyzing media from URLs.
+- ```/health```: GET endpoint to check server status and model availability.
+- ```/```: Serves the index.html frontend.
 
 
 3. Training Models (if needed):
