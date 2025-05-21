@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentinelAI - Intelligent Women Safety Monitoring System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #7b1fa2;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .tagline {
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #e0e0e0;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        .tab.active {
+            background-color: #9c27b0;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 0 5px 5px 5px;
+            background-color: #f9f9f9;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #videoFeed, #uploadedVideo {
+            width: 100%;
+            border-radius: 5px;
+            background-color: #000;
+            margin-bottom: 15px;
+            max-height: 400px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button, .custom-file-upload {
+            padding: 10px 20px;
+            background-color: #9c27b0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        button:hover, .custom-file-upload:hover {
+            background-color: #7b1fa2;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #9c27b0;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .result-card {
+            flex: 1;
+            min-width: 200px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: white;
+        }
+        .result-header {
+            font-weight: bold;
+            color: #9c27b0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .result-icon {
+            font-size: 1.5rem;
+        }
+        .detection-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .detection-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .detection-label {
+            font-weight: 500;
+        }
+        .detection-value {
+            color: #333;
+            font-weight: bold;
+        }
+        .detection-value.alert {
+            color: #f44336;
+        }
+        .detection-value.warning {
+            color: #ff9800;
+        }
+        .detection-value.safe {
+            color: #4caf50;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #cccccc;
+        }
+        .status-dot.active {
+            background-color: #4caf50;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .alert-panel {
+            background-color: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        .alert-header {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-content {
+            color: #333;
+        }
+        .hidden {
+            display: none;
+        }
+        #urlInput {
+            flex: 1;
+        }
+        .url-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        #processingIndicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .tabs {
+                flex-wrap: wrap;
+            }
+            .tab {
+                flex: 1;
+                text-align: center;
+            }
+            .results {
+                flex-direction: column;
+            }
+            .result-card {
+                min-width: 100%;
+            }
+        }
+        button[aria-label], input[aria-label] {
+            outline: none;
+        }
+        button:focus, input:focus {
+            outline: 2px solid #9c27b0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>SentinelAI</h1>
+            <div class="tagline">Intelligent Women Safety Monitoring System</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="card input-section">
+                <h2>Input Source</h2>
+                <div class="tabs">
+                    <button class="tab active" data-tab="upload" aria-label="Upload File Tab">Upload File</button>
+                    <button class="tab" data-tab="url" aria-label="URL Tab">URL</button>
+                    <button class="tab" data-tab="realtime" aria-label="Real-time Capture Tab">Real-time Capture</button>
+                </div>
+
+                <div id="uploadTab" class="tab-content active">
+                    <h3>Upload Image, Video, or Audio</h3>
+                    <label class="custom-file-upload">
+                        <input type="file" id="fileInput" accept="image/*,video/*,audio/*" aria-label="Choose File Input">
+                        Choose File
+                    </label>
+                    <div id="fileDetails"></div>
+                    <video id="uploadedVideo" controls style="display: none;"></video>
+                    <img id="uploadedImage" style="display: none; max-width: 100%; margin-top: 10px;" alt="Uploaded Image Preview">
+                    <div class="controls">
+                        <button id="processUploadBtn" disabled aria-label="Process Uploaded File">Process</button>
+                    </div>
+                </div>
+
+                <div id="urlTab" class="tab-content">
+                    <h3>Analyze from URL</h3>
+                    <div class="url-input-container">
+                        <input type="text" id="urlInput" placeholder="Enter image or video URL (e.g., YouTube, direct .mp4, .jpg)" aria-label="URL Input">
+                        <button id="processUrlBtn" aria-label="Process URL">Process</button>
+                    </div>
+                </div>
+
+                <div id="realtimeTab" class="tab-content">
+                    <h3>Real-time Video & Audio Analysis</h3>
+                    <video id="videoFeed" autoplay muted aria-label="Live Video Feed"></video>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="cameraStatus"></div>
+                        <span>Camera</span>
+                        <div class="status-dot" id="micStatus"></div>
+                        <span>Microphone</span>
+                    </div>
+                    <div class="controls">
+                        <button id="startCaptureBtn" aria-label="Start Real-time Capture">Start Capture</button>
+                        <button id="stopCaptureBtn" disabled aria-label="Stop Real-time Capture">Stop Capture</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card output-section">
+                <h2>Analysis Results</h2>
+                <div id="processingIndicator">
+                    <p>Processing... Please wait.</p>
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
+                    </div>
+                </div>
+                
+                <div id="resultsContainer" style="display: none;">
+                    <div class="results">
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-icon">😐</span>
+                                <span>Emotion Detection</span>
+                            </div>
+                            <ul class="detection-list" id="emotionResults">
+                                <li class="detection-item">
+                                    <span class="detection-label">Primary Emotion:</span>
+                                    <span class="detection-value" id="primaryEmotion">-</span>
+                                </li>
+                                <li class="detection-item">
+                                    <span class="detection-label">Fear Level:</span>
+                                    <span class="detection-value" id="fearLevel">-</span>
+                                </li>
+                                <li class="detection-item">
+                                    <span class="detection-label">Distress:</span>
+                                    <span class="detection-value" id="distressLevel">-</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-icon">🔍</span>
+                                <span>Weapon Detection</span>
+                            </div>
+                            <ul class="detection-list" id="weaponResults">
+                                <li class="detection-item">
+                                    <span class="detection-label">Threat Detected:</span>
+                                    <span class="detection-value" id="threatDetected">-</span>
+                                </li>
+                                <li class="detection-item">
+                                    <span class="detection-label">Weapon Type:</span>
+                                    <span class="detection-value" id="weaponType">-</span>
+                                </li>
+                                <li class="detection-item">
+                                    <span class="detection-label">Confidence:</span>
+                                    <span class="detection-value" id="weaponConfidence">-</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-icon">🔊</span>
+                                <span>Audio Analysis</span>
+                            </div>
+                            <ul class="detection-list" id="audioResults">
+                                <li class="detection-item">
+                                    <span class="detection-label">Scream Detected:</span>
+                                    <span class="detection-value" id="screamDetected">-</span>
+                                </li>
+                                <li class="detection-item">
+                                    <span class="detection-label">Distress Call:</span>
+                                    <span class="detection-value" id="distressCall">-</span>
+                                </li>
+                                <li class="detection-item">
+                                    <span class="detection-label">Background Noise:</span>
+                                    <span class="detection-value" id="backgroundNoise">-</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-panel" id="alertPanel">
+                        <div class="alert-header">
+                            <span>⚠️</span>
+                            <span>POTENTIAL THREAT DETECTED</span>
+                        </div>
+                        <div class="alert-content" id="alertContent">
+                            Multiple indicators suggest a potential safety concern. Consider taking appropriate action.
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="noResults" style="text-align: center; margin-top: 20px;">
+                    <p>No analysis results yet. Upload, provide a URL, or capture media to begin.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="permissionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closePermissionModal" aria-label="Close Permissions Modal">×</span>
+            <h3>Permissions Required</h3>
+            <p>This application needs access to your camera and microphone for real-time threat detection.</p>
+            <p>These permissions are used only for local analysis and no data is sent to any server.</p>
+            <button id="grantPermissionsBtn" aria-label="Grant Permissions">Grant Permissions</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>SentinelAI - Intelligent Safety Monitoring System | Created for women's safety</p>
+            <p>This is a demo application. In a real emergency, always call emergency services.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}Tab`).classList.add('active');
+            });
+        });
+
+        // File upload handling
+        const fileInput = document.getElementById('fileInput');
+        const fileDetails = document.getElementById('fileDetails');
+        const processUploadBtn = document.getElementById('processUploadBtn');
+        const uploadedVideo = document.getElementById('uploadedVideo');
+        const uploadedImage = document.getElementById('uploadedImage');
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('File size exceeds 50MB limit.');
+                    fileInput.value = '';
+                    return;
+                }
+                fileDetails.textContent = `Selected: ${file.name} (${Math.round(file.size / 1024)} KB)`;
+                processUploadBtn.disabled = false;
+                
+                if (file.type.startsWith('image/')) {
+                    uploadedImage.src = URL.createObjectURL(file);
+                    uploadedImage.style.display = 'block';
+                    uploadedVideo.style.display = 'none';
+                } else if (file.type.startsWith('video/')) {
+                    uploadedVideo.src = URL.createObjectURL(file);
+                    uploadedVideo.style.display = 'block';
+                    uploadedImage.style.display = 'none';
+                } else if (file.type.startsWith('audio/')) {
+                    fileDetails.textContent += ' (Audio file, no preview available)';
+                    uploadedVideo.style.display = 'none';
+                    uploadedImage.style.display = 'none';
+                }
+            } else {
+                fileDetails.textContent = 'No file selected';
+                processUploadBtn.disabled = true;
+            }
+        });
+
+        // Process upload button
+        processUploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            let fileType = 'image';
+            if (file.type.startsWith('video/')) fileType = 'video';
+            else if (file.type.startsWith('audio/')) fileType = 'audio';
+            formData.append('file', file);
+            formData.append('type', fileType);
+
+            const processingIndicator = document.getElementById('processingIndicator');
+            const progressBar = document.getElementById('progressBar');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const noResults = document.getElementById('noResults');
+
+            processingIndicator.style.display = 'block';
+            progressBar.style.width = '0%';
+            resultsContainer.style.display = 'none';
+            noResults.style.display = 'none';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                if (progress >= 100) clearInterval(interval);
+            }, 100);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+
+                processingIndicator.style.display = 'none';
+                resultsContainer.style.display = 'block';
+
+                displayResults(data);
+            } catch (error) {
+                alert('Error processing file: ' + error.message);
+                processingIndicator.style.display = 'none';
+                noResults.style.display = 'block';
+            }
+        });
+
+        // URL processing (Direct analysis without preview)
+        const urlInput = document.getElementById('urlInput');
+        const processUrlBtn = document.getElementById('processUrlBtn');
+
+        processUrlBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            if (!url) {
+                alert('Please enter a URL.');
+                return;
+            }
+
+            // Validate URL format
+            let urlObj;
+            try {
+                urlObj = new URL(url);
+            } catch {
+                alert('Invalid URL format.');
+                return;
+            }
+
+            const processingIndicator = document.getElementById('processingIndicator');
+            const progressBar = document.getElementById('progressBar');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const noResults = document.getElementById('noResults');
+
+            processingIndicator.style.display = 'block';
+            progressBar.style.width = '0%';
+            resultsContainer.style.display = 'none';
+            noResults.style.display = 'none';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                if (progress >= 100) clearInterval(interval);
+            }, 100);
+
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('type', url.includes('youtube.com') || url.includes('youtu.be') ? 'video' : 'image');
+
+            try {
+                const response = await fetch('/analyze_url', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+
+                processingIndicator.style.display = 'none';
+                resultsContainer.style.display = 'block';
+
+                displayResults(data);
+            } catch (error) {
+                alert('Error processing URL: ' + error.message);
+                processingIndicator.style.display = 'none';
+                noResults.style.display = 'block';
+            }
+        });
+
+        // Real-time capture
+        const videoFeed = document.getElementById('videoFeed');
+        const startCaptureBtn = document.getElementById('startCaptureBtn');
+        const stopCaptureBtn = document.getElementById('stopCaptureBtn');
+        const cameraStatus = document.getElementById('cameraStatus');
+        const micStatus = document.getElementById('micStatus');
+        const permissionModal = document.getElementById('permissionModal');
+        const closePermissionModal = document.getElementById('closePermissionModal');
+        const grantPermissionsBtn = document.getElementById('grantPermissionsBtn');
+        
+        let stream = null;
+        let mediaRecorder = null;
+        let analysisInterval = null;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let latestEmotion = null;
+        let latestWeapon = null;
+        let latestAudio = null;
+
+        startCaptureBtn.addEventListener('click', () => {
+            permissionModal.style.display = 'block';
+        });
+        
+        closePermissionModal.addEventListener('click', () => {
+            permissionModal.style.display = 'none';
+        });
+        
+        grantPermissionsBtn.addEventListener('click', () => {
+            permissionModal.style.display = 'none';
+            startCapture();
+        });
+        
+        async function startCapture() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                videoFeed.srcObject = stream;
+                startCaptureBtn.disabled = true;
+                stopCaptureBtn.disabled = false;
+                
+                cameraStatus.classList.add('active');
+                micStatus.classList.add('active');
+
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                let audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    if (audioChunks.length > 0) {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        audioChunks = [];
+                        console.log('Sending audio for analysis:', audioBlob);
+                        await analyzeRealtime(audioBlob, 'audio');
+                    }
+                };
+
+                const resultsContainer = document.getElementById('resultsContainer');
+                const noResults = document.getElementById('noResults');
+                resultsContainer.style.display = 'block';
+                noResults.style.display = 'none';
+
+                analysisInterval = setInterval(async () => {
+                    canvas.width = videoFeed.videoWidth;
+                    canvas.height = videoFeed.videoHeight;
+                    ctx.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+                    const imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+
+                    await analyzeRealtime(imageBlob, 'image');
+
+                    if (mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                        mediaRecorder.start();
+                    }
+                }, 2000);
+
+                mediaRecorder.start();
+            } catch (err) {
+                console.error(`Error accessing media devices: ${err}`);
+                alert('Could not access camera or microphone. Please check your permissions.');
+            }
+        }
+
+        async function analyzeRealtime(blob, type) {
+            const formData = new FormData();
+            formData.append('file', blob, type === 'image' ? 'frame.jpg' : 'audio.webm');
+            formData.append('type', type);
+
+            const processingIndicator = document.getElementById('processingIndicator');
+            const progressBar = document.getElementById('progressBar');
+
+            processingIndicator.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    processingIndicator.style.display = 'none';
+                }
+            }, 100);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                console.log('Received analysis data:', data);
+
+                if (type === 'image') {
+                    latestEmotion = data.emotion || latestEmotion;
+                    latestWeapon = data.weapon || latestWeapon;
+                } else if (type === 'audio') {
+                    latestAudio = data.audio || latestAudio;
+                }
+
+                const combinedData = {
+                    emotion: latestEmotion,
+                    weapon: latestWeapon,
+                    audio: latestAudio
+                };
+
+                displayResults(combinedData);
+            } catch (error) {
+                console.error('Error analyzing real-time data:', error);
+                processingIndicator.style.display = 'none';
+            }
+        }
+        
+        stopCaptureBtn.addEventListener('click', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                videoFeed.srcObject = null;
+                startCaptureBtn.disabled = false;
+                stopCaptureBtn.disabled = true;
+                
+                if (analysisInterval) {
+                    clearInterval(analysisInterval);
+                    analysisInterval = null;
+                }
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+                
+                cameraStatus.classList.remove('active');
+                micStatus.classList.remove('active');
+
+                latestEmotion = null;
+                latestWeapon = null;
+                latestAudio = null;
+                const resultsContainer = document.getElementById('resultsContainer');
+                const noResults = document.getElementById('noResults');
+                const processingIndicator = document.getElementById('processingIndicator');
+                resultsContainer.style.display = 'none';
+                noResults.style.display = 'block';
+                processingIndicator.style.display = 'none';
+            }
+        });
+
+        // Display results
+        function displayResults(data) {
+            console.log('Displaying results:', data);
+            const alertPanel = document.getElementById('alertPanel');
+            const alertContent = document.getElementById('alertContent');
+
+            // Emotion results
+            const emotion = data.emotion || (data.summary ? data.summary.highest_emotion_alert : null);
+            document.getElementById('primaryEmotion').textContent = emotion?.predicted_emotion || emotion?.emotion || '-';
+            document.getElementById('fearLevel').textContent = emotion?.confidence ? `${Math.round(emotion.confidence * 100)}%` : '-';
+            document.getElementById('distressLevel').textContent = emotion?.alert || '-';
+
+            if (emotion?.alert) {
+                document.getElementById('primaryEmotion').className = 'detection-value alert';
+                document.getElementById('fearLevel').className = 'detection-value alert';
+                document.getElementById('distressLevel').className = 'detection-value alert';
+            } else if (emotion?.predicted_emotion === 'fear') {
+                document.getElementById('primaryEmotion').className = 'detection-value warning';
+                document.getElementById('fearLevel').className = 'detection-value warning';
+                document.getElementById('distressLevel').className = 'detection-value warning';
+            } else {
+                document.getElementById('primaryEmotion').className = 'detection-value safe';
+                document.getElementById('fearLevel').className = 'detection-value safe';
+                document.getElementById('distressLevel').className = 'detection-value safe';
+            }
+
+            // Weapon results
+            const weapon = data.weapon || (data.summary ? data.summary.highest_weapon_alert : null);
+            document.getElementById('threatDetected').textContent = weapon?.predicted_weapon || weapon?.weapon || '-';
+            document.getElementById('weaponType').textContent = weapon?.predicted_weapon || weapon?.weapon || '-';
+            document.getElementById('weaponConfidence').textContent = weapon?.confidence ? `${Math.round(weapon.confidence * 100)}%` : '-';
+
+            if (weapon?.alert) {
+                document.getElementById('threatDetected').className = 'detection-value alert';
+                document.getElementById('weaponType').className = 'detection-value alert';
+                document.getElementById('weaponConfidence').className = 'detection-value alert';
+            } else {
+                document.getElementById('threatDetected').className = 'detection-value safe';
+                document.getElementById('weaponType').className = 'detection-value safe';
+                document.getElementById('weaponConfidence').className = 'detection-value safe';
+            }
+
+            // Audio results
+            const audio = data.audio || (data.summary ? { alert: data.summary.audio_alert } : null);
+            const screamDetected = audio?.predicted_sound === 'scream' ? 'Yes' : audio?.predicted_sound || '-';
+            document.getElementById('screamDetected').textContent = screamDetected;
+            document.getElementById('distressCall').textContent = audio?.alert || '-';
+            document.getElementById('backgroundNoise').textContent = audio?.probabilities?.background_noise ? `${Math.round(audio.probabilities.background_noise * 100)}%` : '-';
+
+            if (screamDetected === 'Yes' || audio?.alert) {
+                document.getElementById('screamDetected').className = 'detection-value alert';
+                document.getElementById('distressCall').className = 'detection-value alert';
+            } else {
+                document.getElementById('screamDetected').className = 'detection-value safe';
+                document.getElementById('distressCall').className = 'detection-value safe';
+            }
+            document.getElementById('backgroundNoise').className = 'detection-value';
+
+            // Show alert panel if any alerts are present
+            if (emotion?.alert || weapon?.alert || audio?.alert) {
+                alertPanel.style.display = 'block';
+                let alertText = 'Potential safety concern detected: ';
+                if (emotion?.alert) alertText += `Distress emotion (${emotion.predicted_emotion || emotion.emotion}). `;
+                if (weapon?.alert) alertText += `Weapon detected (${weapon.predicted_weapon || weapon.weapon}). `;
+                if (audio?.alert) alertText += `Distress sound (${audio.predicted_sound || 'scream'}). `;
+                alertText += 'An SMS alert has been sent.';
+                alertContent.textContent = alertText;
+            } else {
+                alertPanel.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
